@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,6 +17,16 @@ import java.util.Scanner;
  * @version 180823
  */
 public final class Jsh {
+
+    public static Path getDiretorioAtual() {
+        return diretorioAtual;
+    }
+
+    public static void setDiretorioAtual(Path diretorioAtual) {
+        Jsh.diretorioAtual = diretorioAtual;
+    }
+
+    public static Path diretorioAtual = (Paths.get("").toAbsolutePath());
 
     /**
      * Funcao principal do Jsh.
@@ -35,8 +48,7 @@ public final class Jsh {
         String usuario = System.getProperty("user.name");
         String id = System.getProperty("user.id");
         String aux = "#";
-        String diretorio = System.getProperty("user.dir");
-        System.out.print(usuario + aux + id + ":" + diretorio + ": ");
+        System.out.print(usuario + aux + id + ":" + diretorioAtual + "% ");
     }
 
     /**
@@ -81,11 +93,9 @@ public final class Jsh {
                 case ("relogio"):
                     ComandosInternos.exibirRelogio();
                     break;
-
                 case ("la"):
-                    ComandosInternos.escreverListaArquivos(System.getProperty("user.dir"));
+                    ComandosInternos.escreverListaArquivos(diretorioAtual.toString());
                     break;
-
                 case ("cd"):
                     ComandosInternos.criarNovoDiretorio(comando.getArgumentos().get(0));
                     break;
@@ -93,7 +103,12 @@ public final class Jsh {
                     ComandosInternos.apagarDiretorio(comando.getArgumentos().get(0));
                     break;
                 case ("mdt"):
-                    ComandosInternos.mudarDiretorioTrabalho(comando.getArgumentos().get(0));
+                    String novoDiretorio = comando.getArgumentos().get(0);
+                    if (Files.exists(Paths.get(novoDiretorio))) {
+                        System.setProperty("user.dir", novoDiretorio + System.getProperty("file.separator"));
+                        System.out.println(novoDiretorio + System.getProperty("file.separator"));
+                        setDiretorioAtual(Paths.get(novoDiretorio + System.getProperty("file.separator")));
+                    }
                     break;
                 default:
                     executarPrograma(comando);
@@ -104,8 +119,13 @@ public final class Jsh {
     }
 
     public static int executarPrograma(ComandoPrompt comando) {
-        //throw new RuntimeException("Método ainda não implementado.");
-
+        try {
+            ProcessBuilder pb1 = new ProcessBuilder("cmd", "/C", "start " + comando);
+            Process p1 = pb1.start();
+            System.out.println("Programa executado com sucesso!");
+        } catch (IOException e) {
+            System.out.println("Programa não encontrado!");
+        }
         return 0;
     }
 

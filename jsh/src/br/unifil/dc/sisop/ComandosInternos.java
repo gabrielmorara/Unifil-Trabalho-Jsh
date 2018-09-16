@@ -1,9 +1,14 @@
 package br.unifil.dc.sisop;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Write a description of class ComandosInternos here.
@@ -12,6 +17,8 @@ import java.util.Date;
  * @version 180823
  */
 public final class ComandosInternos {
+
+
 
     public static int exibirRelogio() {
         Date date = new Date();
@@ -73,14 +80,41 @@ public final class ComandosInternos {
         return 0;
     }
 
-    public static int mudarDiretorioTrabalho(String nomeDir) {
-        File dir = new File(nomeDir);
-        boolean existe = dir.exists();
-        if(existe){
-            dir.canExecute();
-        }
+//    public void setCaminho(String caminho){
+//        System.setProperty("user.dir", caminho);
+//    }
+//
+//    public static int mudarDiretorioTrabalho(String nomeDiretorio){
+//
+//        String caminhoCompleto = nomeDiretorio;
+//        if(Files.exists(Paths.get(nomeDiretorio))){
+//
+//        }
+//    }
 
-        return 0;
+    public static String gerarCaminhoAbsoluto(Optional<String> dir){
+        String caminhoRetorno;
+
+        //Pega a barra do sistema
+        String barraDoSistema = System.getProperty("file.separator");
+        String userDir        = System.getProperty("user.dir");
+
+        caminhoRetorno = dir.map(s -> userDir + barraDoSistema + s).orElse(userDir);
+
+
+        /* Metodo acima funnciona como um
+        if (dir.isPresent()){
+            caminhoRetorno = userDir + barraDoSistema + dir.get();
+        }else{
+            caminhoRetorno = userDir;
+        }
+         */
+
+        return caminhoRetorno;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(System.getProperty("user.home"));
     }
 
     /**
